@@ -93,6 +93,9 @@ func New(config Config) (*Console, error) {
 		printer:  config.Printer,
 		histPath: filepath.Join(config.DataDir, HistoryFile),
 	}
+	
+	fmt.Printf("test20180321###\n");
+	
 	if err := os.MkdirAll(config.DataDir, 0700); err != nil {
 		return nil, err
 	}
