@@ -94,7 +94,7 @@ func New(config Config) (*Console, error) {
 		histPath: filepath.Join(config.DataDir, HistoryFile),
 	}
 	
-	fmt.Printf("test20180321###\n");
+	//fmt.Printf("test20180321###\n");
 	
 	if err := os.MkdirAll(config.DataDir, 0700); err != nil {
 		return nil, err
@@ -138,7 +138,7 @@ func (c *Console) init(preload []string) error {
 	if err != nil {
 		return fmt.Errorf("api modules: %v", err)
 	}
-	flatten := "var eth = web3.eth; var personal = web3.personal; "
+	flatten := "var plc = web3.eth; var personal = web3.personal; "
 	for api := range apis {
 		if api == "web3" {
 			continue // manually mapped or ignore
