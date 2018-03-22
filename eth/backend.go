@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package eth implements the Ethereum protocol.
-package eth
+// Package plc implements the Ethereum protocol.
+package plc
 
 import (
 	"errors"
@@ -103,7 +103,7 @@ func (s *Ethereum) AddLesServer(ls LesServer) {
 // initialisation of the common Ethereum object)
 func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 	if config.SyncMode == downloader.LightSync {
-		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
+		return nil, errors.New("can't run plc.Ethereum in light sync mode, use les.LightEthereum")
 	}
 	if !config.SyncMode.IsValid() {
 		return nil, fmt.Errorf("invalid sync mode %d", config.SyncMode)
@@ -119,7 +119,7 @@ func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
-	eth := &Ethereum{
+	plc := &Ethereum{
 		config:         config,
 		chainDb:        chainDb,
 		chainConfig:    chainConfig,
@@ -148,37 +148,37 @@ func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 		vmConfig    = vm.Config{EnablePreimageRecording: config.EnablePreimageRecording}
 		cacheConfig = &core.CacheConfig{Disabled: config.NoPruning, TrieNodeLimit: config.TrieCache, TrieTimeLimit: config.TrieTimeout}
 	)
-	eth.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, eth.chainConfig, eth.engine, vmConfig)
+	plc.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, plc.chainConfig, plc.engine, vmConfig)
 	if err != nil {
 		return nil, err
 	}
 	// Rewind the chain in case of an incompatible config upgrade.
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
-		eth.blockchain.SetHead(compat.RewindTo)
+		plc.blockchain.SetHead(compat.RewindTo)
 		core.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
-	eth.bloomIndexer.Start(eth.blockchain)
+	plc.bloomIndexer.Start(plc.blockchain)
 
 	if config.TxPool.Journal != "" {
 		config.TxPool.Journal = ctx.ResolvePath(config.TxPool.Journal)
 	}
-	eth.txPool = core.NewTxPool(config.TxPool, eth.chainConfig, eth.blockchain)
+	plc.txPool = core.NewTxPool(config.TxPool, plc.chainConfig, plc.blockchain)
 
-	if eth.protocolManager, err = NewProtocolManager(eth.chainConfig, config.SyncMode, config.NetworkId, eth.eventMux, eth.txPool, eth.engine, eth.blockchain, chainDb); err != nil {
+	if plc.protocolManager, err = NewProtocolManager(plc.chainConfig, config.SyncMode, config.NetworkId, plc.eventMux, plc.txPool, plc.engine, plc.blockchain, chainDb); err != nil {
 		return nil, err
 	}
-	eth.miner = miner.New(eth, eth.chainConfig, eth.EventMux(), eth.engine)
-	eth.miner.SetExtra(makeExtraData(config.ExtraData))
+	plc.miner = miner.New(plc, plc.chainConfig, plc.EventMux(), plc.engine)
+	plc.miner.SetExtra(makeExtraData(config.ExtraData))
 
-	eth.ApiBackend = &EthApiBackend{eth, nil}
+	plc.ApiBackend = &EthApiBackend{plc, nil}
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.GasPrice
 	}
-	eth.ApiBackend.gpo = gasprice.NewOracle(eth.ApiBackend, gpoParams)
+	plc.ApiBackend.gpo = gasprice.NewOracle(plc.ApiBackend, gpoParams)
 
-	return eth, nil
+	return plc, nil
 }
 
 func makeExtraData(extra []byte) []byte {
@@ -205,7 +205,7 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (ethdb.Data
 		return nil, err
 	}
 	if db, ok := db.(*ethdb.LDBDatabase); ok {
-		db.Meter("eth/db/chaindata/")
+		db.Meter("plc/db/chaindata/")
 	}
 	return db, nil
 }
@@ -252,17 +252,17 @@ func (s *Ethereum) APIs() []rpc.API {
 	// Append all the local APIs and return
 	return append(apis, []rpc.API{
 		{
-			Namespace: "eth",
+			Namespace: "plc",
 			Version:   "1.0",
 			Service:   NewPublicEthereumAPI(s),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "plc",
 			Version:   "1.0",
 			Service:   NewPublicMinerAPI(s),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "plc",
 			Version:   "1.0",
 			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
 			Public:    true,
@@ -272,7 +272,7 @@ func (s *Ethereum) APIs() []rpc.API {
 			Service:   NewPrivateMinerAPI(s),
 			Public:    false,
 		}, {
-			Namespace: "eth",
+			Namespace: "plc",
 			Version:   "1.0",
 			Service:   filters.NewPublicFilterAPI(s.ApiBackend, false),
 			Public:    true,
