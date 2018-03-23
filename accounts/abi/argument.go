@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2015 The plc Authors
+// This file is part of the plc library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The plc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The plc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the plc library. If not, see <http://www.gnu.org/licenses/>.
 
 package abi
 
@@ -56,7 +56,7 @@ func (argument *Argument) UnmarshalJSON(data []byte) error {
 }
 
 // LengthNonIndexed returns the number of arguments when not counting 'indexed' ones. Only events
-// can ever have 'indexed' arguments, it should always be false on arguments for method input/output
+// can ever have 'indexed' arguments, it should always be false on arguments for mplcod input/output
 func (arguments Arguments) LengthNonIndexed() int {
 	out := 0
 	for _, arg := range arguments {
@@ -185,7 +185,7 @@ func getArraySize(arr *Type) int {
 }
 
 // UnpackValues can be used to unpack ABI-encoded hexdata according to the ABI-specification,
-// without supplying a struct to unpack into. Instead, this method returns a list containing the
+// without supplying a struct to unpack into. Instead, this mplcod returns a list containing the
 // values. An atomic argument will be a list with one element.
 func (arguments Arguments) UnpackValues(data []byte) ([]interface{}, error) {
 	retval := make([]interface{}, 0, arguments.LengthNonIndexed())

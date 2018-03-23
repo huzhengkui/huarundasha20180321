@@ -1,23 +1,23 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The plc Authors
+// This file is part of the plc library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The plc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The plc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the plc library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package bind generates Ethereum contract Go bindings.
+// Package bind generates plcereum contract Go bindings.
 //
-// Detailed usage document and tutorial available on the go-ethereum Wiki page:
-// https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts
+// Detailed usage document and tutorial available on the plc Wiki page:
+// https://github.com/plcereum/plc/wiki/Native-DApps:-Go-bindings-to-plcereum-contracts
 package bind
 
 import (
@@ -28,7 +28,7 @@ import (
 	"text/template"
 	"unicode"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/plcereum/plc/accounts/abi"
 	"golang.org/x/tools/imports"
 )
 
@@ -63,16 +63,16 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string, lang La
 			return r
 		}, abis[i])
 
-		// Extract the call and transact methods; events; and sort them alphabetically
+		// Extract the call and transact mplcods; events; and sort them alphabetically
 		var (
-			calls     = make(map[string]*tmplMethod)
-			transacts = make(map[string]*tmplMethod)
+			calls     = make(map[string]*tmplMplcod)
+			transacts = make(map[string]*tmplMplcod)
 			events    = make(map[string]*tmplEvent)
 		)
-		for _, original := range evmABI.Methods {
-			// Normalize the method for capital cases and non-anonymous inputs/outputs
+		for _, original := range evmABI.Mplcods {
+			// Normalize the mplcod for capital cases and non-anonymous inputs/outputs
 			normalized := original
-			normalized.Name = methodNormalizer[lang](original.Name)
+			normalized.Name = mplcodNormalizer[lang](original.Name)
 
 			normalized.Inputs = make([]abi.Argument, len(original.Inputs))
 			copy(normalized.Inputs, original.Inputs)
@@ -88,11 +88,11 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string, lang La
 					normalized.Outputs[j].Name = capitalise(output.Name)
 				}
 			}
-			// Append the methods to the call or transact lists
+			// Append the mplcods to the call or transact lists
 			if original.Const {
-				calls[original.Name] = &tmplMethod{Original: original, Normalized: normalized, Structured: structured(original.Outputs)}
+				calls[original.Name] = &tmplMplcod{Original: original, Normalized: normalized, Structured: structured(original.Outputs)}
 			} else {
-				transacts[original.Name] = &tmplMethod{Original: original, Normalized: normalized, Structured: structured(original.Outputs)}
+				transacts[original.Name] = &tmplMplcod{Original: original, Normalized: normalized, Structured: structured(original.Outputs)}
 			}
 		}
 		for _, original := range evmABI.Events {
@@ -102,7 +102,7 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string, lang La
 			}
 			// Normalize the event for capital cases and non-anonymous outputs
 			normalized := original
-			normalized.Name = methodNormalizer[lang](original.Name)
+			normalized.Name = mplcodNormalizer[lang](original.Name)
 
 			normalized.Inputs = make([]abi.Argument, len(original.Inputs))
 			copy(normalized.Inputs, original.Inputs)
@@ -336,14 +336,14 @@ func bindTopicTypeJava(kind abi.Type) string {
 }
 
 // namedType is a set of functions that transform language specific types to
-// named versions that my be used inside method names.
+// named versions that my be used inside mplcod names.
 var namedType = map[Lang]func(string, abi.Type) string{
 	LangGo:   func(string, abi.Type) string { panic("this shouldn't be needed") },
 	LangJava: namedTypeJava,
 }
 
 // namedTypeJava converts some primitive data types to named variants that can
-// be used as parts of method names.
+// be used as parts of mplcod names.
 func namedTypeJava(javaKind string, solKind abi.Type) string {
 	switch javaKind {
 	case "byte[]":
@@ -378,9 +378,9 @@ func namedTypeJava(javaKind string, solKind abi.Type) string {
 	}
 }
 
-// methodNormalizer is a name transformer that modifies Solidity method names to
+// mplcodNormalizer is a name transformer that modifies Solidity mplcod names to
 // conform to target language naming concentions.
-var methodNormalizer = map[Lang]func(string) string{
+var mplcodNormalizer = map[Lang]func(string) string{
 	LangGo:   capitalise,
 	LangJava: decapitalise,
 }
@@ -431,7 +431,7 @@ func toCamelCase(input string) string {
 	return result
 }
 
-// structured checks whether a list of ABI data types has enough information to
+// structured checks whplcer a list of ABI data types has enough information to
 // operate through a proper Go struct or if flat returns are needed.
 func structured(args abi.Arguments) bool {
 	if len(args) < 2 {

@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2017 The plc Authors
+// This file is part of the plc library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The plc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The plc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the plc library. If not, see <http://www.gnu.org/licenses/>.
 
 package abi
 
@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/plcereum/plc/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -314,7 +314,7 @@ var unpackTests = []unpackTest{
 func TestUnpack(t *testing.T) {
 	for i, test := range unpackTests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			def := fmt.Sprintf(`[{ "name" : "method", "outputs": %s}]`, test.def)
+			def := fmt.Sprintf(`[{ "name" : "mplcod", "outputs": %s}]`, test.def)
 			abi, err := JSON(strings.NewReader(def))
 			if err != nil {
 				t.Fatalf("invalid ABI definition %s: %v", def, err)
@@ -324,7 +324,7 @@ func TestUnpack(t *testing.T) {
 				t.Fatalf("invalid hex: %s" + test.enc)
 			}
 			outptr := reflect.New(reflect.TypeOf(test.want))
-			err = abi.Unpack(outptr.Interface(), "method", encb)
+			err = abi.Unpack(outptr.Interface(), "mplcod", encb)
 			if err := test.checkError(err); err != nil {
 				t.Errorf("test %d (%v) failed: %v", i, test.def, err)
 				return
@@ -337,15 +337,15 @@ func TestUnpack(t *testing.T) {
 	}
 }
 
-type methodMultiOutput struct {
+type mplcodMultiOutput struct {
 	Int    *big.Int
 	String string
 }
 
-func methodMultiReturn(require *require.Assertions) (ABI, []byte, methodMultiOutput) {
+func mplcodMultiReturn(require *require.Assertions) (ABI, []byte, mplcodMultiOutput) {
 	const definition = `[
 	{ "name" : "multi", "constant" : false, "outputs": [ { "name": "Int", "type": "uint256" }, { "name": "String", "type": "string" } ] }]`
-	var expected = methodMultiOutput{big.NewInt(1), "hello"}
+	var expected = mplcodMultiOutput{big.NewInt(1), "hello"}
 
 	abi, err := JSON(strings.NewReader(definition))
 	require.NoError(err)
@@ -358,13 +358,13 @@ func methodMultiReturn(require *require.Assertions) (ABI, []byte, methodMultiOut
 	return abi, buff.Bytes(), expected
 }
 
-func TestMethodMultiReturn(t *testing.T) {
+func TestMplcodMultiReturn(t *testing.T) {
 	type reversed struct {
 		String string
 		Int    *big.Int
 	}
 
-	abi, data, expected := methodMultiReturn(require.New(t))
+	abi, data, expected := mplcodMultiReturn(require.New(t))
 	bigint := new(big.Int)
 	var testCases = []struct {
 		dest     interface{}
@@ -372,7 +372,7 @@ func TestMethodMultiReturn(t *testing.T) {
 		error    string
 		name     string
 	}{{
-		&methodMultiOutput{},
+		&mplcodMultiOutput{},
 		&expected,
 		"",
 		"Can unpack into structure",
@@ -408,7 +408,7 @@ func TestMethodMultiReturn(t *testing.T) {
 			require := require.New(t)
 			err := abi.Unpack(tc.dest, "multi", data)
 			if tc.error == "" {
-				require.Nil(err, "Should be able to unpack method outputs.")
+				require.Nil(err, "Should be able to unpack mplcod outputs.")
 				require.Equal(tc.expected, tc.dest)
 			} else {
 				require.EqualError(err, tc.error)
@@ -783,7 +783,7 @@ func TestOOMMaliciousInput(t *testing.T) {
 		},
 	}
 	for i, test := range oomTests {
-		def := fmt.Sprintf(`[{ "name" : "method", "outputs": %s}]`, test.def)
+		def := fmt.Sprintf(`[{ "name" : "mplcod", "outputs": %s}]`, test.def)
 		abi, err := JSON(strings.NewReader(def))
 		if err != nil {
 			t.Fatalf("invalid ABI definition %s: %v", def, err)
@@ -792,7 +792,7 @@ func TestOOMMaliciousInput(t *testing.T) {
 		if err != nil {
 			t.Fatalf("invalid hex: %s" + test.enc)
 		}
-		_, err = abi.Methods["method"].Outputs.UnpackValues(encb)
+		_, err = abi.Mplcods["mplcod"].Outputs.UnpackValues(encb)
 		if err == nil {
 			t.Fatalf("Expected error on malicious input, test %d", i)
 		}

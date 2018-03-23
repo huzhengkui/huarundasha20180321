@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2017 The plc Authors
+// This file is part of the plc library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The plc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The plc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the plc library. If not, see <http://www.gnu.org/licenses/>.
 
 package keystore
 
@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/plcereum/plc/accounts"
+	"github.com/plcereum/plc/common"
+	"github.com/plcereum/plc/log"
 	"gopkg.in/fatih/set.v0"
 )
 
@@ -240,7 +240,7 @@ func (ac *accountCache) scanAccounts() error {
 	if creates.Size() == 0 && deletes.Size() == 0 && updates.Size() == 0 {
 		return nil
 	}
-	// Create a helper method to scan the contents of the key files
+	// Create a helper mplcod to scan the contents of the key files
 	var (
 		buf = new(bufio.Reader)
 		key struct {

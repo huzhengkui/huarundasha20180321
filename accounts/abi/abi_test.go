@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2015 The plc Authors
+// This file is part of the plc library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The plc library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The plc library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the plc library. If not, see <http://www.gnu.org/licenses/>.
 
 package abi
 
@@ -27,8 +27,8 @@ import (
 
 	"reflect"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/plcereum/plc/common"
+	"github.com/plcereum/plc/crypto"
 )
 
 const jsondata = `
@@ -58,7 +58,7 @@ const jsondata2 = `
 func TestReader(t *testing.T) {
 	Uint256, _ := NewType("uint256")
 	exp := ABI{
-		Methods: map[string]Method{
+		Mplcods: map[string]Mplcod{
 			"balance": {
 				"balance", true, nil, nil,
 			},
@@ -76,23 +76,23 @@ func TestReader(t *testing.T) {
 	}
 
 	// deep equal fails for some reason
-	for name, expM := range exp.Methods {
-		gotM, exist := abi.Methods[name]
+	for name, expM := range exp.Mplcods {
+		gotM, exist := abi.Mplcods[name]
 		if !exist {
-			t.Errorf("Missing expected method %v", name)
+			t.Errorf("Missing expected mplcod %v", name)
 		}
 		if !reflect.DeepEqual(gotM, expM) {
-			t.Errorf("\nGot abi method: \n%v\ndoes not match expected method\n%v", gotM, expM)
+			t.Errorf("\nGot abi mplcod: \n%v\ndoes not match expected mplcod\n%v", gotM, expM)
 		}
 	}
 
-	for name, gotM := range abi.Methods {
-		expM, exist := exp.Methods[name]
+	for name, gotM := range abi.Mplcods {
+		expM, exist := exp.Mplcods[name]
 		if !exist {
-			t.Errorf("Found extra method %v", name)
+			t.Errorf("Found extra mplcod %v", name)
 		}
 		if !reflect.DeepEqual(gotM, expM) {
-			t.Errorf("\nGot abi method: \n%v\ndoes not match expected method\n%v", gotM, expM)
+			t.Errorf("\nGot abi mplcod: \n%v\ndoes not match expected mplcod\n%v", gotM, expM)
 		}
 	}
 }
@@ -176,9 +176,9 @@ func TestTestSlice(t *testing.T) {
 	}
 }
 
-func TestMethodSignature(t *testing.T) {
+func TestMplcodSignature(t *testing.T) {
 	String, _ := NewType("string")
-	m := Method{"foo", false, []Argument{{"bar", String, false}, {"baz", String, false}}, nil}
+	m := Mplcod{"foo", false, []Argument{{"bar", String, false}, {"baz", String, false}}, nil}
 	exp := "foo(string,string)"
 	if m.Sig() != exp {
 		t.Error("signature mismatch", exp, "!=", m.Sig())
@@ -190,7 +190,7 @@ func TestMethodSignature(t *testing.T) {
 	}
 
 	uintt, _ := NewType("uint256")
-	m = Method{"foo", false, []Argument{{"bar", uintt, false}}, nil}
+	m = Mplcod{"foo", false, []Argument{{"bar", uintt, false}}, nil}
 	exp = "foo(uint256)"
 	if m.Sig() != exp {
 		t.Error("signature mismatch", exp, "!=", m.Sig())
@@ -555,7 +555,7 @@ func TestDefaultFunctionParsing(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, ok := abi.Methods["balance"]; !ok {
+	if _, ok := abi.Mplcods["balance"]; !ok {
 		t.Error("expected 'balance' to be present")
 	}
 }
@@ -658,7 +658,7 @@ func TestUnpackEvent(t *testing.T) {
 	}
 }
 
-func TestABI_MethodById(t *testing.T) {
+func TestABI_MplcodById(t *testing.T) {
 	const abiJSON = `[
 		{"type":"function","name":"receive","constant":false,"inputs":[{"name":"memo","type":"bytes"}],"outputs":[],"payable":true,"stateMutability":"payable"},
 		{"type":"event","name":"received","anonymous":false,"inputs":[{"indexed":false,"name":"sender","type":"address"},{"indexed":false,"name":"amount","type":"uint256"},{"indexed":false,"name":"memo","type":"bytes"}]},
@@ -687,15 +687,15 @@ func TestABI_MethodById(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for name, m := range abi.Methods {
+	for name, m := range abi.Mplcods {
 		a := fmt.Sprintf("%v", m)
-		m2, err := abi.MethodById(m.Id())
+		m2, err := abi.MplcodById(m.Id())
 		if err != nil {
-			t.Fatalf("Failed to look up ABI method: %v", err)
+			t.Fatalf("Failed to look up ABI mplcod: %v", err)
 		}
 		b := fmt.Sprintf("%v", m2)
 		if a != b {
-			t.Errorf("Method %v (id %v) not 'findable' by id in ABI", name, common.ToHex(m.Id()))
+			t.Errorf("Mplcod %v (id %v) not 'findable' by id in ABI", name, common.ToHex(m.Id()))
 		}
 	}
 
