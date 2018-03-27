@@ -1,6 +1,6 @@
 // Copyright 2014 The go-ethereum Authors
 // This file is part of go-ethereum.
-//
+//test
 // go-ethereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -217,6 +217,10 @@ func geth(ctx *cli.Context) error {
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	node.Wait()
+	
+	//test
+    log.Warn("Test 20180328\n")
+	
 	return nil
 }
 
